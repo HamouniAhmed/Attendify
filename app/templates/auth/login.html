@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/all.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+</head>
+<body>
+  <div class="login-wrapper d-flex align-items-center justify-content-center">
+    <div class="login-card shadow-lg d-flex flex-wrap">
+      <!-- Left side: Login form -->
+      <div class="login-left">
+        <h2 class="mb-4 fw-bold">Connexion</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('auth.login') }}" id="loginForm">
+          {{ form.hidden_tag() }}
+          
+          <div class="mb-4">
+            <label for="{{ form.email.id }}" class="form-label">
+              <i class="fas fa-user me-2"></i>Nom d'utilisateur
+            </label>
+            <div class="input-group">
+              {{ form.email(class="form-control form-control-lg") }}
+              <i class="fas fa-envelope input-icon"></i>
+            </div>
+            {% if form.email.errors %}
+              <div class="text-danger mt-1">{{ form.email.errors[0] }}</div>
+            {% endif %}
+          </div>
+          
+          <div class="mb-4">
+            <label for="{{ form.password.id }}" class="form-label">
+              <i class="fas fa-lock me-2"></i>Mot de passe
+            </label>
+            <div class="input-group">
+              {{ form.password(class="form-control form-control-lg") }}
+              <i class="fas fa-key input-icon"></i>
+            </div>
+            {% if form.password.errors %}
+              <div class="text-danger mt-1">{{ form.password.errors[0] }}</div>
+            {% endif %}
+          </div>
+          
+          <div class="d-grid">
+            {{ form.submit(class="btn btn-primary btn-lg", value="Se connecter", id="submitBtn") }}
+          </div>
+        </form>
+      </div>
+      
+      <!-- Right side: Brand and system info -->
+      <div class="login-right d-flex flex-column justify-content-center align-items-center text-white text-center p-5">
+        <div class="container">
+          <img src="{{ url_for('static', filename='images/login_page_logo.png') }}" alt="Attendify Logo" class="logo-img mb-4">
+          <div class="row">
+            <div class="col-12 text-center">
+              <span class="text-muted">
+                <i class="fas fa-shield-alt me-2"></i>
+                Attendify © {{ datetime.now().year }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script>
+    // Enhanced form interactions
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('loginForm');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // Add loading state to button on form submit
+      form.addEventListener('submit', function() {
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+      });
+      
+      // Add focus effects to inputs
+      const inputs = document.querySelectorAll('.form-control-lg');
+      inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+          this.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+          this.parentElement.classList.remove('focused');
+        });
+      });
+      
+      // Add ripple effect to button
+      submitBtn.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
+  </script>
+  
+  <style>
+    /* Ripple effect */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(0);
+      animation: rippleEffect 0.6s linear;
+      pointer-events: none;
+    }
+    
+    @keyframes rippleEffect {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  </style>
+</body>
+</html>

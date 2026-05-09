@@ -1,0 +1,156 @@
+<!-- app/templates/base.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Attendify{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{{ url_for('static', filename='images/logo_page.png') }}" alt="Logo" height="50">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/dashboard' %}active{% endif %}" href="{{ url_for('dashboard.admin_dashboard') }}">
+                            <i class="fas fa-chart-line me-1"></i> Tableau de Bord
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if '/suppliers' in request.path %}active{% endif %}" href="#" id="supplierDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-industry me-1"></i> Fournisseurs
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if request.endpoint == 'supplier.list_suppliers' %}active{% endif %}" href="{{ url_for('supplier.list_suppliers') }}">Lister les Fournisseurs</a></li>
+                            <li><a class="dropdown-item {% if request.endpoint == 'supplier.add_supplier' %}active{% endif %}" href="{{ url_for('supplier.add_supplier') }}">Ajouter un Fournisseur</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if '/interns' in request.path %}active{% endif %}" href="#" id="internDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-graduate me-1"></i> Stagiaires
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item {% if request.endpoint == 'intern.list_interns' %}active{% endif %}" href="{{ url_for('intern.list_interns') }}">Lister les Stagiaires</a></li>
+                            <li><a class="dropdown-item {% if request.endpoint == 'intern.add_intern' %}active{% endif %}" href="{{ url_for('intern.add_intern') }}">Ajouter un Stagiaire</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if '/attendance' in request.path %}active{% endif %}" href="#" id="attendanceDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-clipboard-check me-1"></i> Présence
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('records.view_records') }}">Voir les Enregistrements</a></li>
+                             <li><a class="dropdown-item" href="{{ url_for('attendance.attendance_details') }}">Entrée / Sortie</a></li>   
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'auth.list_users' %}active{% endif %}" href="{{ url_for('auth.list_users') }}">
+                            <i class="fas fa-users-gear me-1"></i> Utilisateurs
+                        </a>
+                    </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'attendance.attendance_home' %}active{% endif %}" href="{{ url_for('attendance.attendance_home') }}">
+                                <i class="fas fa-home me-1"></i> Accueil
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'attendance.add_visitor' %}active{% endif %}" href="{{ url_for('attendance.add_visitor') }}">
+                                <i class="fas fa-user-plus me-1"></i> Visiteur
+                            </a>
+                        </li>
+    
+                        <li class="nav-item">
+                            <a class="nav-link  {% if request.endpoint == 'attendance.attendance_details' %}active{% endif %}" href="{{ url_for('attendance.attendance_details') }}">
+                                <i class="fas fa-list me-1"></i> Détails
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown user-dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <div class="dropdown-header">
+                                        <strong><span>{{ current_user.email }}</span></strong>
+                                        <p class="text-muted mb-0">
+                                            {{ current_user.role.capitalize() }} | {{ current_user.facility_location }}
+                                        </p>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-right-from-bracket me-2"></i> Déconnexion
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-danger px-3 ms-2" href="{{ url_for('auth.login') }}">
+                                <i class="fas fa-right-to-bracket me-1"></i> Connexion
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <span class="text-muted">Attendify © {{ datetime.now().year }}</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- All JavaScript files loaded locally for offline support -->
+    <script src="{{ url_for('static', filename='js/jquery-3.6.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/attendance.js') }}"></script>
+
+    {% block extra_js %}{% endblock %}
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>

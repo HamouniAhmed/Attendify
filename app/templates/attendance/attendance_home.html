@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Présences{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Gestion des Présences</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-danger text-white"> {# Changé en rouge #}
+                    <h5 class="card-title mb-0">Pointage Entrée/Sortie</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('attendance.process_attendance_request') }}">
+                        {{ check_form.csrf_token }}
+                        <div class="mb-3">
+                            {{ check_form.id_value.label(class="form-label", text="ID Utilisateur / Badge RFID / CIN") }}
+                            {{ check_form.id_value(class="form-control", placeholder="Entrez l'ID, le CIN ou scannez la carte RFID", autofocus=true) }}
+                        </div>
+                        <div class="mb-3 d-flex align-items-center">
+                            <label class="form-label mb-0 me-2">Site Actuel :</label> {# Texte changé #}
+                            <span class="px-3 py-2 rounded bg-light border text-danger fw-bold">
+                                {{ current_user.facility_location }}
+                            </span>
+                            {# Champ caché pour la localisation si nécessaire dans le form #}
+                            {% if check_form.facility_location %}
+                            {{ check_form.facility_location(value=current_user.facility_location, style="display:none;") }}
+                            {% endif %}
+                        </div>
+
+                        {{ check_form.submit(class="btn btn-danger") }} {# Changé en rouge #}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white"> {# Changé en noir #}
+                    <h5 class="card-title mb-0">Statistiques du Jour</h5> {# Texte changé #}
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h6>Présences Aujourd'hui</h6> {# Texte changé #}
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Stagiaires :</span> {# Texte changé #}
+                                    <span class="badge bg-primary rounded-pill">{{ stats['today']['interns'] }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Fournisseurs :</span> {# Texte changé #}
+                                    <span class="badge bg-success rounded-pill">{{ stats['today']['suppliers'] }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Visiteurs :</span> {# Texte changé #}
+                                    <span class="badge bg-warning rounded-pill">{{ stats['today']['visitors'] }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><strong>Total :</strong></span> {# Texte changé #}
+                                    <span class="badge bg-dark rounded-pill">{{ stats['today']['total'] }}</span> {# Changé en noir #}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <h6>Actuellement Présents</h6> {# Texte changé #}
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Stagiaires :</span> {# Texte changé #}
+                                    <span class="badge bg-primary rounded-pill">{{ stats['current']['interns']|length }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Fournisseurs :</span> {# Texte changé #}
+                                    <span class="badge bg-success rounded-pill">{{ stats['current']['suppliers']|length }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Visiteurs :</span> {# Texte changé #}
+                                    <span class="badge bg-warning rounded-pill">{{ stats['current']['visitors']|length }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span><strong>Total :</strong></span> {# Texte changé #}
+                                    <span class="badge bg-dark rounded-pill">{{ stats['current']['total'] }}</span> {# Changé en noir #}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <a href="{{ url_for('attendance.attendance_details') }}" class="btn btn-outline-dark">Voir les détails</a> {# Texte/Style changés #}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white"> {# Style gris #}
+            <h5 class="card-title mb-0">Présences Récentes</h5> {# Texte changé #}
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nom</th> {# Texte changé #}
+                            <th>Type</th> {# Texte changé #}
+                            <th>Heure d'Entrée</th> {# Texte changé #}
+                            <th>Statut</th> {# Texte changé #}
+                            <th>Action</th> {# Texte changé #}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in recent %}
+                            {% set entry_type = entry.__class__.__name__.replace('Attendance', '').lower() %}
+                            {% if entry_type == 'intern' %}
+                                {% set name = entry.intern_full_name %}
+                                {% set badge_class = 'bg-primary' %}
+                            {% elif entry_type == 'supplier' %}
+                                {% set name = entry.supplier_full_name %}
+                                {% set badge_class = 'bg-success' %}
+                            {% else %}
+                                {% set name = entry.visitor_name %}
+                                {% set badge_class = 'bg-warning' %}
+                            {% endif %}
+
+                            <tr>
+                                <td>{{ name }}</td>
+                                <td><span class="badge {{ badge_class }}">{{ entry_type|capitalize }}</span></td>
+                                <td>{{ entry.entry_time.strftime('%H:%M:%S') }}</td>
+                                <td>
+                                    {% if entry.exit_time %}
+                                        <span class="badge bg-secondary">Sorti</span> {# Texte changé #}
+                                    {% else %}
+                                        <span class="badge bg-success">Présent</span> {# Texte changé #}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not entry.exit_time %}
+                                        <form method="POST" action="{{ url_for('attendance.checkout', attendance_type=entry_type, attendance_id=entry.id) }}" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Sortie</button> {# Texte/Style changés #}
+                                        </form>
+                                    {% else %}
+                                        <span class="text-muted">Sorti à {{ entry.exit_time.strftime('%H:%M:%S') }}</span> {# Texte changé #}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                        <tr>
+                           <td colspan="5" class="text-center">Aucune présence récente enregistrée.</td> {# Texte changé #}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="supplierModal" tabindex="-1" aria-labelledby="supplierModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white"> {# Gardé en vert pour Fournisseur #}
+                    <h5 class="modal-title" id="supplierModalLabel">Détails Pointage Fournisseur</h5> {# Texte changé #}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button> {# Style btn-close pour fond coloré #}
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('attendance.supplier_checkin') }}">
+                        {{ supplier_form.csrf_token }}
+                        <input type="hidden" name="supplier_id" id="supplier_id_input">
+                        <input type="hidden" name="facility_location" id="facility_location_input">
+
+                        <div class="mb-3">
+                            {{ supplier_form.presence_type.label(class="form-label", text="Type de Présence") }} {# Texte changé #}
+                            {{ supplier_form.presence_type(class="form-select") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ supplier_form.department_visited.label(class="form-label", text="Département Visité") }} {# Texte changé #}
+                            {{ supplier_form.department_visited(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ supplier_form.person_visited.label(class="form-label", text="Personne Visitée") }} {# Texte changé #}
+                            {{ supplier_form.person_visited(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ supplier_form.notes.label(class="form-label") }}
+                            {{ supplier_form.notes(class="form-control", rows=3) }}
+                        </div>
+                        {{ supplier_form.submit(class="btn btn-success") }} {# Gardé en vert #}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button> {# Bouton Annuler ajouté #}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="visitorModal" tabindex="-1" aria-labelledby="visitorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark"> {# Gardé en jaune pour Visiteur #}
+                    <h5 class="modal-title" id="visitorModalLabel">Enregistrer Visiteur</h5> {# Texte changé #}
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('attendance.add_visitor') }}">
+                        {{ visitor_form.csrf_token }}
+                        <div class="mb-3">
+                            {{ visitor_form.visitor_name.label(class="form-label", text="Nom du Visiteur") }} {# Texte changé #}
+                            {{ visitor_form.visitor_name(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ visitor_form.visit_purpose.label(class="form-label", text="Motif de la Visite") }} {# Texte changé #}
+                            {{ visitor_form.visit_purpose(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ visitor_form.visit_host.label(class="form-label", text="Hôte de la Visite") }} {# Texte changé #}
+                            {{ visitor_form.visit_host(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ visitor_form.facility_location.label(class="form-label", text="Site") }} {# Texte changé #}
+                            {{ visitor_form.facility_location(class="form-select") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ visitor_form.notes.label(class="form-label") }}
+                            {{ visitor_form.notes(class="form-control", rows=3) }}
+                        </div>
+                        {{ visitor_form.submit(class="btn btn-warning text-dark") }} {# Gardé en jaune #}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button> {# Bouton Annuler ajouté #}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Condition pour afficher le modal visiteur (si nécessaire depuis le backend) #}
+{% if show_visitor_modal %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var visitorModal = new bootstrap.Modal(document.getElementById('visitorModal'));
+        visitorModal.show();
+    });
+</script>
+{% endif %}
+
+{# Le bloc scripts est retiré, en supposant que attendCE.js est chargé globalement #}
+
+{% endblock %}

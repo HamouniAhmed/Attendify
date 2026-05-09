@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Voir les Enregistrements{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename= 'css/records.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/open-sans-font.css') }}"> 
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="page-header">
+        {# --- CHANGE 1: Removed display-4 class --- #}
+        <h1>Voir les Enregistrements</h1>
+        <p class="lead">Consultez et filtrez les enregistrements d'entrée et de sortie</p>
+    </div>
+
+    <ul class="nav nav-pills mb-4">
+        {# No changes needed inside the ul/li/a structure for the tabs #}
+        <li class="nav-item">
+             <a class="nav-link {% if record_type == 'supplier' %}active{% endif %}"
+                href="{{ url_for('records.view_records', type='supplier') }}">
+                 Fournisseurs
+             </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if record_type == 'intern' %}active{% endif %}"
+               href="{{ url_for('records.view_records', type='intern') }}">
+                Stagiaires
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if record_type == 'visitor' %}active{% endif %}"
+               href="{{ url_for('records.view_records', type='visitor') }}">
+                Visiteurs
+            </a>
+        </li>
+    </ul>
+    <!-- Filters -->
+    <div class="card filters-card mb-4">
+        <div class="card-body">
+            <h4 class="card-title">Filtres</h4>
+            <form method="get" action="{{ url_for('records.view_records') }}">
+                <input type="hidden" name="type" value="{{ record_type }}">
+                
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="start_date" class="form-label">Date de début</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="end_date" class="form-label">Date de fin</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="name" class="form-label">
+                            {% if record_type == 'supplier' %}Nom du fournisseur
+                            {% elif record_type == 'intern' %}Nom du stagiaire
+                            {% else %}Nom du visiteur{% endif %}
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ name_filter }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="location" class="form-label">Emplacement</label>
+                        <input type="text" class="form-control" id="location" name="location" value="{{ location_filter }}">
+                    </div>
+                </div>
+                
+                <div class="row g-3 mt-2">
+                    {% if record_type == 'supplier' %}
+                    <div class="col-md-3">
+                        <label for="company" class="form-label">Entreprise</label>
+                        <input type="text" class="form-control" id="company" name="company" value="{{ company_filter }}">
+                    </div>
+                    {% elif record_type == 'intern' %}
+                    <div class="col-md-3">
+                        <label for="department" class="form-label">Département</label>
+                        <input type="text" class="form-control" id="department" name="department" value="{{ department_filter }}">
+                    </div>
+                    {% elif record_type == 'visitor' %}
+                    <div class="col-md-3">
+                        <label for="purpose" class="form-label">Motif de visite</label>
+                        <input type="text" class="form-control" id="purpose" name="purpose" value="{{ purpose_filter }}">
+                    </div>
+                    {% endif %}
+                    
+                    <div class="col-md-9 d-flex align-items-end justify-content-end">
+                        <button type="submit" class="btn-primary 2">
+                            <i class="fas fa-filter me-1"></i> Appliquer les filtres
+                        </button>
+                        <a href="{{ url_for('records.view_records', type=record_type) }}" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-undo me-1"></i> Réinitialiser
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Records Count and Export -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="records-count">
+            <span class="badge bg-danger">{{ records|length }}</span>
+            enregistrement{% if records|length != 1 %}s{% endif %} trouvé{% if records|length != 1 %}s{% endif %}
+        </div>
+        
+        <div class="export-buttons">
+            <!-- Build query parameters for export links -->
+            {% set export_params = {
+                'type': record_type,
+                'start_date': start_date,
+                'end_date': end_date,
+                'name': name_filter,
+                'location': location_filter
+            } %}
+            
+            {% if record_type == 'supplier' %}
+                {% set export_params = export_params | dict_update({'company': company_filter}) %}
+            {% elif record_type == 'intern' %}
+                {% set export_params = export_params | dict_update({'department': department_filter}) %}
+            {% elif record_type == 'visitor' %}
+                {% set export_params = export_params | dict_update({'purpose': purpose_filter}) %}
+            {% endif %}
+            
+            <a href="{{ url_for('records.export_records', format='excel', **export_params) }}" class="btn btn-success me-2">
+                <i class="fas fa-file-excel me-1"></i> Excel
+            </a>
+            <a href="{{ url_for('records.export_records', format='csv', **export_params) }}" class="btn btn-info">
+                <i class="fas fa-file-csv me-1"></i> CSV
+            </a>
+        </div>
+    </div>
+    
+    <!-- Data Table -->
+    <div class="card">
+        <div class="card-body p-0">
+            {% if records %}
+                <div class="table-responsive">
+                    {% if record_type == 'supplier' %}
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom Complet</th>
+                                    <th>Entreprise</th>
+                                    <th>CIN</th>
+                                    <th>Date d'entrée</th>
+                                    <th>Date de sortie</th>
+                                    <th>Type de présence</th>
+                                    <th>Département visité</th>
+                                    <th>Personne visitée</th>
+                                    <th>Emplacement</th>
+                                    <th>Heures passées</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in records %}
+                                <tr>
+                                    <td>{{ record.id }}</td>
+                                    <td>{{ record.supplier_full_name }}</td>
+                                    <td>{{ record.company }}</td>
+                                    <td>{{ record.cin }}</td>
+                                    <td>{{ record.entry_time.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ record.exit_time.strftime('%d/%m/%Y %H:%M') if record.exit_time else '-' }}</td>
+                                    <td>{{ record.presence_type }}</td>
+                                    <td>{{ record.department_visited }}</td>
+                                    <td>{{ record.person_visited }}</td>
+                                    <td>{{ record.facility_location }}</td>
+                                    <td>{{ "%.2f"|format(record.hours_spent) if record.hours_spent else '-' }}</td>
+                                    <td>{{ record.notes or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% elif record_type == 'intern' %}
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom Complet</th>
+                                    <th>Département</th>
+                                    <th>CIN</th>
+                                    <th>Type de Stage</th>
+                                    <th>Date d'entrée</th>
+                                    <th>Date de sortie</th>
+                                    <th>Emplacement</th>
+                                    <th>Heures passées</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in records %}
+                                <tr>
+                                    <td>{{ record.id }}</td>
+                                    <td>{{ record.intern_full_name }}</td>
+                                    <td>{{ record.department }}</td>
+                                    <td>{{ record.cin }}</td>
+                                    <td>{{ record.intern_type }}</td>
+                                    <td>{{ record.entry_time.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ record.exit_time.strftime('%d/%m/%Y %H:%M') if record.exit_time else '-' }}</td>
+                                    <td>{{ record.facility_location }}</td>
+                                    <td>{{ "%.2f"|format(record.hours_spent) if record.hours_spent else '-' }}</td>
+                                    <td>{{ record.notes or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %} <!-- visitor -->
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom du visiteur</th>
+                                    <th>Motif de visite</th>
+                                    <th>Établissement</th>
+                                    <th>Date d'entrée</th>
+                                    <th>Date de sortie</th>
+                                    <th>Emplacement</th>
+                                    <th>Heures passées</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in records %}
+                                <tr>
+                                    <td>{{ record.id }}</td>
+                                    <td>{{ record.visitor_name }}</td>
+                                    <td>{{ record.visit_purpose }}</td>
+                                    <td>{{ record.visit_host }}</td>
+                                    <td>{{ record.entry_time.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ record.exit_time.strftime('%d/%m/%Y %H:%M') if record.exit_time else '-' }}</td>
+                                    <td>{{ record.facility_location }}</td>
+                                    <td>{{ "%.2f"|format(record.hours_spent) if record.hours_spent else '-' }}</td>
+                                    <td>{{ record.notes or '-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="no-records">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>Aucun enregistrement trouvé avec les filtres actuels.</h5>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

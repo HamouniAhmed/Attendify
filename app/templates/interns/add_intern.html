@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% import "_form_macros.html" as macros %}
+
+{% block title %}Ajouter Stagiaire{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+<h1 class="mb-4 text">Ajouter un nouveau stagiaire <span class="fa fa-user-graduate ms-2"></span></h1>    <div class="card p-4 shadow-sm">
+        <form method="POST" action="{{ url_for('intern.add_intern') }}" enctype="multipart/form-data" novalidate>
+
+            {{ form.hidden_tag() }}
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.first_name, class="form-control", placeholder="Prénom") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.last_name, class="form-control", placeholder="Nom") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.manual_id, class="form-control", placeholder="ID Manuel (facultatif)") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.cin, class="form-control", placeholder="Numéro CIN") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.intern_type, class="form-select") }} {# Use form-select for dropdowns #}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.department, class="form-select") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.supervisor, class="form-control", placeholder="Superviseur") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.rfid_uid, class="form-control", placeholder="RFID UID (facultatif)") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.facility_location, class="form-control", placeholder="Localisation du site") }}
+                </div>
+                <div class="col-md-6">
+                    <label for="{{ form.picture.id }}" class="form-label">Photo du stagiaire</label>
+                    {{ form.picture(class="form-control") }}
+                    {% if form.picture.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.picture.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-4 form-check form-switch"> {# Use form-check and form-switch for a toggle switch #}
+                {{ form.is_active(class="form-check-input") }}
+                <label class="form-check-label" for="{{ form.is_active.id }}">Stagiaire Actif</label>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                {{ form.submit(class="btn btn-danger btn-lg") }}
+                <a href="{{ url_for('intern.list_interns') }}" class="btn btn-outline-secondary btn-lg">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

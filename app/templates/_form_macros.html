@@ -1,0 +1,36 @@
+{% macro render_field(field, label_visible=true, label_text=none) %}
+    <div class="mb-3">
+        {% if label_visible %}
+            {{ field.label(class="form-label") if label_text is none else field.label(label_text, class="form-label") }}
+        {% endif %}
+
+        {% if field.type == 'BooleanField' %}
+             <div class="form-check">
+                {{ field(class="form-check-input " + kwargs.get('class', ''), **kwargs) }}
+                {% if field.label.text and not label_visible %} {# Show label next to checkbox if main label hidden #}
+                    <label class="form-check-label" for="{{ field.id }}">{{ field.label.text }}</label>
+                 {% endif %}
+             </div>
+         {% elif field.type == 'RadioField' %}
+             {% for subfield in field %}
+                 <div class="form-check">
+                     {{ subfield(class="form-check-input " + kwargs.get('class', ''), **kwargs) }}
+                     {{ subfield.label(class="form-check-label") }}
+                 </div>
+             {% endfor %}
+         {% else %}
+              {{ field(class="form-control " + kwargs.get('class', ''), **kwargs) }}
+         {% endif %}
+
+        {% if field.errors %}
+            <div class="invalid-feedback d-block">
+                {% for error in field.errors %}
+                    <span>{{ error }}</span><br>
+                {% endfor %}
+            </div>
+        {% endif %}
+         {% if field.description %}
+             <small class="form-text text-muted">{{ field.description }}</small>
+         {% endif %}
+    </div>
+{% endmacro %}

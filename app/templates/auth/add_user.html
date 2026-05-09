@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un utilisateur{% endblock %}
+
+{% block content %}
+<div class="container mt-4"> {# Added margin-top for spacing from potential navbar #}
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6"> {# Slightly narrower on large screens for better form aesthetics #}
+            <div class="card shadow-sm"> {# Added a subtle shadow #}
+                <div class="card-header bg-danger text-white"> {# Changed bg-primary to bg-danger for red background #}
+                    {# Added an icon for visual flair (requires Bootstrap Icons) #}
+                    <h2 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Ajouter un Utilisateur</h2>
+                </div>
+                <div class="card-body">
+                    {# Flashed messages section - consider adding role="alert" for accessibility #}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                {# Map categories to Bootstrap alert types (e.g., 'error' -> 'danger') #}
+                                {% set alert_type = category if category in ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'] else 'info' %}
+                                <div class="alert alert-{{ alert_type }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    {# Use novalidate if using browser validation alongside Flask-WTF/server-side validation #}
+                    <form method="POST" action="{{ url_for('auth.add_user') }}" novalidate>
+                        {{ form.hidden_tag() }} {# For CSRF token #}
+
+                        {# Email Field - Use mb-3 for spacing in Bootstrap 5 #}
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {# Added placeholder and is-invalid class handling #}
+                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="nom@exemple.com") }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.email.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Role Field #}
+                        <div class="mb-3">
+                            {{ form.role.label(class="form-label") }}
+                            {# Assuming role is a SelectField - adjust if it's different #}
+                            {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
+                            {% if form.role.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.role.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Facility Location Field #}
+                        <div class="mb-3">
+                            {{ form.facility_location.label(class="form-label") }}
+                            {# Assuming facility_location is a SelectField or Text Field #}
+                            {# Use form-select for dropdowns, form-control for text #}
+                            {{ form.facility_location(class="form-control" + (" is-invalid" if form.facility_location.errors else ""), placeholder="Entrez le lieu...") }}
+                            {% if form.facility_location.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.facility_location.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Password Field #}
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label") }}
+                            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), id="password") }} {# Added id for aria-describedby #}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.password.errors[0] }}
+                                </div>
+                            {% else %}
+                                {# Link help text to input for accessibility #}
+                                <small id="passwordHelp" class="form-text text-muted">Le mot de passe doit contenir au moins 8 caractères.</small>
+                            {% endif %}
+                        </div>
+
+                        {# Confirm Password Field #}
+                        <div class="mb-3">
+                            {{ form.confirm_password.label(class="form-label") }}
+                            {{ form.confirm_password(class="form-control" + (" is-invalid" if form.confirm_password.errors else "")) }}
+                            {% if form.confirm_password.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.confirm_password.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Buttons - Grouped with margin-top #}
+                        <div class="mt-4 d-grid gap-2 d-sm-flex justify-content-sm-end"> {# Improved button layout for responsiveness #}
+                            <a href="{{ url_for('auth.list_users') }}" class="btn btn-secondary order-sm-1">Annuler</a>
+                            {{ form.submit(class="btn btn-primary order-sm-2") }}
+                        </div>
+                    </form>
+                </div> {# End card-body #}
+            </div> {# End card #}
+        </div> {# End col #}
+    </div> {# End row #}
+</div> {# End container #}
+{% endblock %}

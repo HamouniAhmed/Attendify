@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Détails du Fournisseur{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Détails du Fournisseur</h1>
+        <div>
+            <a href="{{ url_for('supplier.list_suppliers') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="fas fa-user-tie text-primary me-2"></i>Détails du Fournisseur
+            </h4>
+            <div>
+                <a href="{{ url_for('supplier.edit_supplier', supplier_id=supplier.id) }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-edit me-1"></i>Modifier
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <div class="person-image-container mb-3">
+                        {% if supplier.picture_url %}
+                        <img src="{{ url_for('static', filename= supplier.picture_url) }}" 
+                             alt="Photo de {{ supplier.full_name }}" 
+                             class="img-fluid rounded person-image border shadow-sm" style="max-height: 250px;">
+                        {% else %}
+                        <div class="no-image-placeholder p-5 bg-light border rounded">
+                            <i class="fas fa-user-circle fa-5x text-secondary"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <span class="badge bg-primary mb-2">Fournisseur</span>
+                    
+                    {% if supplier.manual_id or supplier.rfid_uid %}
+                    <div class="mt-3">
+                        {% if supplier.manual_id %}
+                        <p class="mb-1"><strong>ID Manuel:</strong> {{ supplier.manual_id }}</p>
+                        {% endif %}
+                        {% if supplier.rfid_uid %}
+                        <p class="mb-1"><strong>Tag RFID:</strong> {{ supplier.rfid_uid }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <h5 class="card-title">{{ supplier.full_name }}</h5>
+                    
+                    <table class="table table-hover table-sm mt-3">
+                        <tbody>
+                            <tr>
+                                <th style="width: 40%">Entreprise</th>
+                                <td>{{ supplier.company }}</td>
+                            </tr>
+                            <tr>
+                                <th>CIN</th>
+                                <td>{{ supplier.cin }}</td>
+                            </tr>
+                            <tr>
+                                <th>Nom du chef</th>
+                                <td>{{ supplier.chef_name or 'Non spécifié' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Téléphone du chef</th>
+                                <td>{{ supplier.chef_number or 'Non spécifié' }}</td>
+                            </tr>
+                            <tr>
+                                <th>CNSS</th>
+                                <td>{{ supplier.cnss or 'Non spécifié' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Usine</th>
+                                <td>{{ supplier.facility_location }}</td>
+                            </tr>
+                            <tr>
+                                <th>Statut</th>
+                                <td>
+                                    {% if supplier.is_active %}
+                                    <span class="badge bg-success">Actif</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactif</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-white">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">
+                        Créé le: {{ supplier.created_at.strftime('%d/%m/%Y') }}
+                    </small>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small class="text-muted">
+                        Dernière modification: {{ supplier.updated_at.strftime('%d/%m/%Y') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Historique de présence si disponible -->
+    {% if attendance_history %}
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historique des visites</h5>
+        </div>
+        <div class="card-body">
+            {% if attendance_history|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Entrée</th>
+                            <th>Sortie</th>
+                            <th>Durée (h)</th>
+                            <th>Type</th>
+                            <th>Département visité</th>
+                            <th>Personne visitée</th>
+                            <th>Usine</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in attendance_history %}
+                        <tr>
+                            <td>{{ record.entry_time.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ record.entry_time.strftime('%H:%M') }}</td>
+                            <td>{{ record.exit_time.strftime('%H:%M') if record.exit_time else '-' }}</td>
+                            <td>{{ "%.2f"|format(record.hours_spent) if record.hours_spent else '-' }}</td>
+                            <td>{{ record.presence_type }}</td>
+                            <td>{{ record.department_visited }}</td>
+                            <td>{{ record.person_visited }}</td>
+                            <td>{{ record.facility_location }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Aucun historique de visites pour ce fournisseur.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .person-image-container {
+        width: 100%;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    .person-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    .no-image-placeholder {
+        width: 100%;
+        height: 90%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}

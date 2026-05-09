@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% import "_form_macros.html" as macros %}
+
+{% block title %}Modifier Fournisseur{% endblock %} {# Changed title to French for consistency #}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">
+        Modifier le fournisseur: {{ supplier.full_name }} <span class="fa fa-truck-moving ms-2"></span> {# Changed icon to truck-moving #}
+    </h1>
+
+    <div class="card p-4 shadow-sm">
+        <form method="POST" action="{{ url_for('supplier.edit_supplier', supplier_id=supplier.id) }}" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.first_name, class="form-control", placeholder="Prénom du contact") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.last_name, class="form-control", placeholder="Nom du contact") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.company, class="form-control", placeholder="Nom de l'entreprise") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.cin, class="form-control", placeholder="Numéro CIN du contact") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.chef_name, class="form-control", placeholder="Nom du responsable") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.chef_number, class="form-control", placeholder="Numéro du responsable") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.cnss, class="form-control", placeholder="Numéro CNSS (facultatif)") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.rfid_uid, class="form-control", placeholder="RFID UID (facultatif)") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.facility_location, class="form-control", placeholder="Localisation du site") }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label d-block mb-2">Photo actuelle</label>
+                    <div class="d-flex align-items-center"> {# Using flexbox for alignment #}
+                        {% if current_picture_url %} {# Assuming 'picture_path' exists on the intern object #}
+                            <img src="{{ url_for('static', filename= current_picture_url) }}" alt="Current Picture" class="img-thumbnail me-3" style="max-width: 100px; max-height: 100px;">
+                        {% else %}
+                            <span class="text-muted me-3">Aucune photo</span>
+                        {% endif %}
+                        {# Render the file input for new picture upload #}
+                        {{ form.picture(class="form-control") }}
+                    </div>
+                    {% if form.picture.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.picture.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Laisser vide pour conserver la photo actuelle.</small>
+                </div>
+            </div>
+
+            <div class="mb-4 form-check form-switch">
+                {{ form.is_active(class="form-check-input") }}
+                <label class="form-check-label" for="{{ form.is_active.id }}">Fournisseur Actif</label>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                {{ form.submit(class="btn btn-primary btn-lg") }} {# Standard "save" action button #}
+                <a href="{{ url_for('supplier.list_suppliers') }}" class="btn btn-outline-secondary btn-lg">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

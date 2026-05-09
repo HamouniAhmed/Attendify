@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% import "_form_macros.html" as macros %}
+
+{% block title %}Ajouter Fournisseur{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text">Ajouter un nouveau fournisseur <span class="fa fa-industry ms-2"></span></h1>
+    <div class="card p-4 shadow-sm">
+            <form method="POST" action="{{ url_for('supplier.add_supplier') }}" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }} 
+
+            <!-- Display any flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.manual_id, class="form-control", placeholder="ID Manuel") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.rfid_uid, class="form-control", placeholder="RFID UID (facultatif)") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.first_name, class="form-control", placeholder="Prénom du contact") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.last_name, class="form-control", placeholder="Nom du contact") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.company, class="form-control", placeholder="Nom de l'entreprise") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.cin, class="form-control", placeholder="Numéro CIN du contact") }}
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.chef_name, class="form-control", placeholder="Nom du responsable") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.chef_number, class="form-control", placeholder="Numéro du responsable") }}
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ macros.render_field(form.cnss, class="form-control", placeholder="Numéro CNSS (facultatif)") }}
+                </div>
+                <div class="col-md-6">
+                    {{ macros.render_field(form.facility_location, class="form-control", placeholder="Localisation du site") }}
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="{{ form.picture.id }}" class="form-label">Photo du fournisseur</label>
+                    {{ form.picture(class="form-control") }}
+                    {% if form.picture.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.picture.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-4 form-check form-switch">
+                {{ form.is_active(class="form-check-input") }}
+                <label class="form-check-label" for="{{ form.is_active.id }}">Fournisseur Actif</label>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                {{ form.submit(class="btn btn-primary btn-lg") }}
+                <a href="{{ url_for('supplier.list_suppliers') }}" class="btn btn-outline-secondary btn-lg">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

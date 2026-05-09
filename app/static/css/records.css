@@ -1,0 +1,327 @@
+/* static/css/records.css - Modernized to match style.css theme */
+:root {
+    --primary-red: #dc3545;
+    --dark-grey: #343a40;
+    --light-grey: #f8f9fa;
+    --lighter-red: #e9545d; /* Slightly lighter red for hover/inactive */
+    --darker-red: #b82031; /* Slightly darker red for active/stronger emphasis */
+    --medium-grey: #6c757d; /* Bootstrap's secondary text color */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-grey);
+    color: var(--dark-grey);
+}
+
+.container {
+    max-width: auto; /* Adjust as needed */
+}
+
+.page-header {
+    background-color: white;
+    color: var(--dark-grey);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Force button active state to be red */
+.btn-primary:active,
+.btn-primary.active,
+.show > .btn-primary.dropdown-toggle {
+    background-color: var(--darker-red) !important;
+    border-color: var(--darker-red) !important;
+    color: white !important;
+}
+
+.btn-outline-secondary:active,
+.btn-outline-secondary.active,
+.show > .btn-outline-secondary.dropdown-toggle {
+    background-color: var(--primary-red) !important;
+    border-color: var(--primary-red) !important;
+    color: white !important;
+}
+
+/* Override Bootstrap's active state for btn-primary */
+.btn-primary:active,
+.btn-primary.active {
+    background-color: var(--darker-red) !important;
+    border-color: var(--darker-red) !important;
+}
+
+/* Force red active state for the filter button */
+.filters-card .col-md-9.d-flex button.btn-primary:active,
+.filters-card .col-md-9.d-flex button.btn-primary.active {
+    background-color: var(--darker-red) !important;
+    border-color: var(--darker-red) !important;
+    color: white !important;
+}/* Force red active state - Last Resort */
+button.btn-primary:active,
+button.btn-primary.active {
+    background-color: #b82031 !important; /* Using the hex code directly */
+    border-color: #b82031 !important;
+    color: white !important;
+}
+/* Force red active state by overriding Bootstrap variables */
+.btn-primary {
+    --bs-btn-active-bg: #b82031 !important;
+    --bs-btn-active-border-color: #b82031 !important;
+}
+
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    background-color: var(--primary-red) !important;
+    border-color: var(--primary-red) !important;
+    color: white !important;
+}
+.page-header h1 {
+    font-size: 2.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.page-header p.lead {
+    font-size: 1.05rem;
+    color: var(--medium-grey);
+    margin-bottom: 0;
+}
+
+.filters-card {
+    background-color: white;
+    border-left: 5px solid var(--primary-red);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.filters-card .card-title {
+    color: var(--primary-red);
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* --- Styles for Nav Pills (Tabs) --- */
+.nav-pills {
+    margin-bottom: 2rem !important;
+}
+
+.nav-pills .nav-item {
+    margin-right: 0.5rem;
+}
+.nav-pills .nav-item:last-child {
+    margin-right: 0;
+}
+
+.nav-pills .nav-link {
+    background-color: var(--light-grey);
+    color: var(--dark-grey);
+    border: 1px solid #ced4da;
+    font-weight: 500;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.nav-pills .nav-link:not(.active):hover,
+.nav-pills .nav-link:not(.active):focus {
+    background-color: rgba(220, 53, 69, 0.05);
+    color: var(--primary-red);
+    border-color: var(--primary-red);
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    background-color: var(--primary-red);
+    border-color: var(--primary-red);
+    color: white;
+    font-weight: 600;
+}
+
+/* Button Overrides to match theme */
+.btn-primary {
+    background-color: var(--primary-red);
+    border-color: var(--primary-red);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--darker-red);
+    border-color: var(--darker-red);
+}
+.btn-primary:active, .btn-primary.active {
+    background-color: var(--darker-red) !important;
+    border-color: var(--darker-red) !important;
+}
+
+.btn-outline-secondary {
+    color: var(--primary-red);
+    border-color: var(--primary-red);
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+}
+.btn-outline-secondary:hover, .btn-outline-secondary:focus {
+    background-color: rgba(220, 53, 69, 0.15);
+    color: var(--primary-red);
+    border-color: var(--primary-red);
+}
+.btn-outline-secondary:active, .btn-outline-secondary.active {
+    background-color: var(--primary-red) !important;
+    border-color: var(--primary-red) !important;
+    color: white !important;
+}
+
+/* Keep export buttons distinct */
+.btn-success, .btn-info {
+    padding: 0.5rem 1rem;
+    color: white;
+    border-radius: 0.25rem;
+}
+.btn-success:hover, .btn-info:hover {
+    opacity: 0.85;
+}
+
+.records-count {
+    margin-bottom: 1rem;
+    color: var(--medium-grey);
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+.records-count .badge {
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+    padding: 0.4em 0.7em;
+    background-color: var(--primary-red) !important;
+    border-radius: 0.25rem;
+}
+
+.no-records {
+    padding: 2.5rem;
+    text-align: center;
+    color: var(--medium-grey);
+    background-color: white;
+    border-radius: 10px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.no-records i {
+    color: var(--primary-red);
+    margin-bottom: 0.75rem !important;
+}
+.no-records h5 {
+    font-weight: 500;
+    color: var(--dark-grey);
+}
+
+/* Modern Bootstrap enhancements & Table styling */
+.card {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    overflow: hidden; /* To contain rounded corners of table */
+}
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    color: var(--dark-grey);
+}
+
+.table th {
+    background-color: var(--dark-grey);
+    color: white;
+    border-bottom: 1px solid #6c757d;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+}
+
+.table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1rem 1.5rem;
+    }
+    .page-header h1 {
+        font-size: 1.8rem;
+    }
+    .page-header p.lead {
+        font-size: 0.95rem;
+    }
+
+    .filters-card {
+        padding: 1.25rem;
+    }
+    .filters-card .card-title {
+        font-size: 1.3rem;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .filters-card .row > div {
+        margin-bottom: 1rem;
+    }
+    .filters-card .col-md-9.d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    .filters-card .col-md-9.d-flex .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    .filters-card .col-md-9.d-flex .btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .export-buttons {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+    .export-buttons .btn {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+     .export-buttons .btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .nav-pills .nav-link {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    .records-count {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 0.9rem;
+    }
+    .records-count .badge {
+        margin-right: 0;
+        margin-bottom: 0.3rem;
+    }
+}

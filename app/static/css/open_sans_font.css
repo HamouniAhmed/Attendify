@@ -1,0 +1,44 @@
+/* Open Sans Regular 400 */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/open-sans-v18-latin-400.woff2') format('woff2'),
+       url('../fonts/open-sans-v18-latin-400.woff') format('woff');
+}
+
+/* Open Sans Semi-Bold 600 */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/open-sans-v18-latin-600.woff2') format('woff2'),
+       url('../fonts/open-sans-v18-latin-600.woff') format('woff');
+}
+
+/* Open Sans Bold 700 */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/open-sans-v18-latin-700.woff2') format('woff2'),
+       url('../fonts/open-sans-v18-latin-700.woff') format('woff');
+}
+
+/* Open Sans Italic 400 */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/open-sans-v18-latin-400italic.woff2') format('woff2'),
+       url('../fonts/open-sans-v18-latin-400italic.woff') format('woff');
+}
+
+/* Apply Open Sans to body */
+body {
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}

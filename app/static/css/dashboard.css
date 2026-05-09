@@ -1,0 +1,348 @@
+/* static/css/dashboard.css */
+
+:root {
+    /* Re-declaring from style.css for reference, but they are global */
+    /* --primary-red: #dc3545; */
+    /* --dark-grey: #343a40; */
+    /* --light-grey: #f8f9fa; */
+
+    /* Dashboard Specific Dark Theme Colors */
+    --dashboard-bg: #ffffff; /* Main dashboard background - white */
+    --card-bg: #2c3034; /* Darker grey for cards */
+    --card-border: #495057;
+
+    /* MODIFIED: Text color for elements on the main --dashboard-bg (white) */
+    --text-on-light-primary: #212529; /* Near black for primary text */
+    --text-on-light-secondary: #495057; /* Darker grey for secondary text */
+
+    /* NEW: Text colors for elements on dark backgrounds like cards */
+    --text-on-dark-primary: #f8f9fa;   /* Very light grey / off-white for primary text on cards */
+    --text-on-dark-secondary: #adb5bd; /* Medium grey for secondary text on cards */
+
+    --accent-red: var(--primary-red, #dc3545); /* Use global or fallback */
+    --accent-light-red: #ff6b6b;
+    --positive-green: #1cc88a;
+    --negative-orange: #fd7e14;
+}
+
+/* Apply theme to the dashboard container */
+.dashboard-container {
+    background-color: var(--dashboard-bg);
+    /* MODIFIED: Use text-on-light-primary for general text on dashboard-bg */
+    color: var(--text-on-light-primary);
+    border-radius: 8px;
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+.dashboard-title {
+    /* MODIFIED: Ensures title on white background is black/dark */
+    color: var(--text-on-light-primary);
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.dashboard-title .fas {
+    color: var(--accent-red);
+}
+
+.refresh-button {
+    background-color: var(--accent-red);
+    color: white; /* This text is on a dark red button, so white is fine */
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.refresh-button:hover {
+    background-color: #c82333;
+}
+
+.refresh-button .fas {
+    margin-right: 0.5rem;
+}
+
+.section-nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 1rem;
+}
+
+.section-nav-item {
+    /* MODIFIED: Default nav item color on white background */
+    color: var(--text-on-light-secondary);
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.section-nav-item .fas {
+    /* MODIFIED: Default icon color */
+    margin-right: 0.5rem;
+    color: var(--text-on-light-secondary);
+    transition: color 0.3s ease;
+}
+
+.section-nav-item:hover {
+    background-color: #e9ecef; /* Lighter background on hover for white theme */
+    /* MODIFIED: Hover text color */
+    color: var(--text-on-light-primary);
+}
+.section-nav-item:hover .fas {
+    color: var(--accent-red); /* Accent color for icon on hover */
+}
+
+.section-nav-item.active {
+    background-color: var(--accent-red);
+    color: white; /* Text on red button is white */
+    border-color: var(--accent-red);
+}
+.section-nav-item.active .fas {
+    color: white;
+}
+
+
+.dashboard-section {
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
+}
+
+.section-header {
+    /* MODIFIED: Section header on white background */
+    color: var(--text-on-light-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    border-bottom: 2px solid var(--accent-red);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+.section-header .fas {
+    color: var(--accent-red);
+    margin-right: 0.5rem;
+}
+
+.stat-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    /* MODIFIED: Default text color inside stat card */
+    color: var(--text-on-dark-primary);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.stat-card .card-body {
+    padding: 0;
+    flex-grow: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    /* MODIFIED: Label color inside stat card */
+    color: var(--text-on-dark-secondary);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    /* MODIFIED: Value color inside stat card */
+    color: var(--text-on-dark-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* CHANGE 3: Remove Percentages from "Statistiques Générales" */
+.stat-change {
+    font-size: 0.9rem;
+    /* ADDED: This will hide the percentage divs */
+    display: none;
+}
+
+/* Keep positive/negative styling in case you re-enable .stat-change later,
+   or for other elements. */
+.stat-change.positive {
+    color: var(--positive-green);
+}
+.stat-change.positive .fas {
+    margin-right: 0.25rem;
+}
+
+.stat-change.negative {
+    color: var(--negative-orange);
+}
+.stat-change.negative .fas {
+    margin-right: 0.25rem;
+}
+
+.stat-card .card-icon {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 2.5rem;
+    opacity: 0.15;
+    /* MODIFIED: Icon color in card */
+    color: var(--text-on-dark-secondary);
+}
+
+/* Specific stat card accent colors - these will override the general text color for values/labels */
+/* Ensuring these colors are light enough for the dark card background.
+   Bootstrap defaults might be dark. Using lighter versions or ensuring high contrast. */
+.stat-card-primary .stat-label, .stat-card-primary .stat-value { color: var(--accent-light-red); }
+.stat-card-success .stat-label, .stat-card-success .stat-value { color: var(--positive-green); } /* Already good */
+.stat-card-info .stat-label, .stat-card-info .stat-value { color: #36a2eb; } /* Lighter info blue */
+.stat-card-warning .stat-label, .stat-card-warning .stat-value { color: #ffce56; } /* Lighter warning yellow */
+.stat-card-secondary .stat-label, .stat-card-secondary .stat-value { color: var(--text-on-dark-secondary); }
+.stat-card-accent .stat-label, .stat-card-accent .stat-value { color: var(--accent-red); }
+
+
+.chart-container {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 1.5rem;
+    border-radius: 8px;
+    /* MODIFIED: Default text color inside chart container */
+    color: var(--text-on-dark-primary);
+    min-height: 480px; /* Original min-height */
+    /* ADDED: Ensure there's enough vertical space for the chart to render fully,
+              especially if its content (like legends) takes up space.
+              You might need to adjust this based on your chart content. */
+    /* height: 400px; /* Alternative to min-height if you want fixed height */
+    display: flex;
+    flex-direction: column;
+}
+.chart-container .chart-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    /* MODIFIED: Title color inside chart container */
+    color: var(--text-on-dark-primary);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+.chart-container .chart-title .fas {
+    margin-right: 0.5rem;
+    color: var(--accent-red); /* Icon color is fine */
+}
+
+.chart-container .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: var(--accent-red);
+    min-height: 200px;
+}
+.chart-container > div[id*="-chart"] {
+    flex-grow: 1;
+    /* ADDED: Ensure Plotly has a defined area to draw.
+       The HTML already sets height: 300px; this CSS rule is a fallback
+       or can be used if you remove inline styles. */
+    height: 300px; /* Or 'auto' if you want Plotly to manage it with container flex */
+}
+
+
+/* Top Suppliers List in Chart Container */
+.top-suppliers-list-container {
+    overflow-y: auto;
+    /* max-height: 280px; /* Original: Adjust based on chart-container height and title */
+    /* ADDED: Make it flexible */
+    flex-grow: 1;
+    padding-right: 10px;
+}
+
+.top-suppliers-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.top-suppliers-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--card-border);
+    transition: background-color 0.2s ease;
+}
+
+.top-suppliers-list li:last-child {
+    border-bottom: none;
+}
+
+.top-suppliers-list li:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.top-suppliers-list .badge-rank {
+    background-color: var(--accent-red);
+    color: white; /* Text on red badge is white */
+    padding: 0.3em 0.6em;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-right: 0.75rem;
+    min-width: 25px;
+    text-align: center;
+}
+
+.top-suppliers-list .supplier-name {
+    font-weight: 500;
+    /* MODIFIED: Supplier name color in list */
+    color: var(--text-on-dark-primary);
+}
+
+.top-suppliers-list .supplier-company {
+    font-size: 0.85em;
+    /* MODIFIED: Supplier company color in list */
+    color: var(--text-on-dark-secondary);
+}
+
+.top-suppliers-list .supplier-hours {
+    font-weight: 600;
+    color: var(--accent-light-red); /* This is already a light color, good for dark bg */
+    font-size: 0.9em;
+}
+
+/* Ensure Bootstrap's .row doesn't have negative margins interfering */
+.dashboard-section > .row {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+}
+.dashboard-section > .row > [class*="col-"] {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.chart-error-message {
+    color: var(--accent-light-red);
+    text-align: center;
+    padding: 2rem;
+}
